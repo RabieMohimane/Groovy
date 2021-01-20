@@ -2,7 +2,10 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-android-extensions'
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
 }
+
 
 android {
     compileSdkVersion 30
@@ -68,5 +71,8 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     androidTestImplementation('com.schibsted.spain:barista:3.6.0') {
         exclude group: 'org.jetbrains.kotlin' // Only if you already use Kotlin in your project
+
     }
+    implementation "com.google.dagger:hilt-android:2.28-alpha"
+    kapt "com.google.dagger:hilt-android-compiler:2.28-alpha"
 }

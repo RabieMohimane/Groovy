@@ -5,6 +5,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.collect
 import petros.efthymiou.groovy.playlist.PlayList
 import petros.efthymiou.groovy.playlist.PlayListRepository
+import javax.inject.Inject
 
 class PlaylistViewModel(private val repository: PlayListRepository) : ViewModel() {
 
