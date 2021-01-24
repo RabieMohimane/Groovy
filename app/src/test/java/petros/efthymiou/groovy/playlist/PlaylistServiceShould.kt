@@ -14,7 +14,7 @@ import java.lang.RuntimeException
 class PlaylistServiceShould : BaseUnitTest() {
     private val api: PlayListsApi = mock()
     private lateinit var service: PlayListService
-    private val playlists: List<PlayList> =mock()
+    private val playlists: List<PlayListRaw> =mock()
 
     @Test
     fun fetchPlaylistsFromApi() = runBlockingTest {

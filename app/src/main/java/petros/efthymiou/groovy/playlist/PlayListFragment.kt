@@ -12,12 +12,11 @@ import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.fragment_item_list.*
 import petros.efthymiou.groovy.R
 import javax.inject.Inject
 
-/**
- * A fragment representing a list of Items.
- */
+
 @AndroidEntryPoint
 class PlayListFragment : Fragment() {
 
@@ -33,10 +32,17 @@ class PlayListFragment : Fragment() {
         setupViewModel()
         val view = inflater.inflate(R.layout.fragment_item_list, container, false)
         Log.e("List", "onCreateView")
+        viewModel.loader.observe(this as LifecycleOwner) { loading ->
+
+           when(loading){
+               true-> loader.visibility=View.VISIBLE
+               else-> loader.visibility=View.GONE
+           }
+        }
         viewModel.playlists.observe(this as LifecycleOwner) { playlists ->
             Log.e("List", "playlists.observe")
             if (playlists.getOrNull() != null)
-                setupList(view, playlists.getOrNull()!!)
+                setupList(playlist_list, playlists.getOrNull()!!)
             else {
                 Log.e("List", "null")
             }
@@ -50,7 +56,7 @@ class PlayListFragment : Fragment() {
         playlists: List<PlayList>
     ) {
         Log.e("List", "setupList")
-        with(view as RecyclerView) {
+        with(view as RecyclerView ) {
             layoutManager = LinearLayoutManager(context)
             adapter =
                 MyPlayListRecyclerViewAdapter(

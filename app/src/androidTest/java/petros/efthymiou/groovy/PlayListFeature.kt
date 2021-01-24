@@ -10,6 +10,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.ActivityTestRule
 import com.schibsted.spain.barista.assertion.BaristaRecyclerViewAssertions.assertRecyclerViewItemCount
 import com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed
+import com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertNotDisplayed
 import com.schibsted.spain.barista.internal.matcher.DrawableMatcher.Companion.withDrawable
 import org.hamcrest.Description
 import org.hamcrest.Matcher
@@ -47,10 +48,33 @@ class PlayListFeature {
             .check(matches(withText("rock")))
             .check(matches(isDisplayed()))
 
-        onView(allOf(withId(R.id.image), isDescendantOfA(nthChildOf(withId(R.id.playlist_list),0))))
+        onView(allOf(withId(R.id.image), isDescendantOfA(nthChildOf(withId(R.id.playlist_list),1))))
             .check(matches(withDrawable(R.mipmap.playlist)))
             .check(matches(isDisplayed()))
     }
+    @Test
+    fun displaysLoaderWhileFechingThePlaylist(){
+        assertDisplayed(R.id.loader)
+    }
+
+    @Test
+    fun hideLoader(){
+        Thread.sleep(6000)
+        assertNotDisplayed(R.id.loader)
+    }
+    @Test
+    fun displayRockImageForRockListsItems(){
+        Thread.sleep(6000)
+        onView(allOf(withId(R.id.image), isDescendantOfA(nthChildOf(withId(R.id.playlist_list),0))))
+            .check(matches(withDrawable(R.mipmap.rock)))
+            .check(matches(isDisplayed()))
+        onView(allOf(withId(R.id.image), isDescendantOfA(nthChildOf(withId(R.id.playlist_list),3))))
+            .check(matches(withDrawable(R.mipmap.rock)))
+            .check(matches(isDisplayed()))
+    }
+
+
+
     fun nthChildOf(parentMatcher: Matcher<View>, childPosition: Int): Matcher<View> {
         return object : TypeSafeMatcher<View>() {
             override fun describeTo(description: Description) {

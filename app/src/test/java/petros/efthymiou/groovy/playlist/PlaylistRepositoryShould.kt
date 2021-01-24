@@ -15,17 +15,19 @@ import java.lang.RuntimeException
 class PlaylistRepositoryShould : BaseUnitTest() {
 
     private val service: PlayListService = mock()
+    private val mapper: PlayListMapper = mock()
     private val playlists = mock<List<PlayList>>()
+    private val playlistsRaw = mock<List<PlayListRaw>>()
 private  val exception=RuntimeException("Something Went Wrong!!")
     @Test
     fun getPlaylistsfromService() = runBlockingTest {
-        val repository = PlayListRepository(service)
+        val repository = PlayListRepository(service,mapper)
         repository.getPlaylists()
         verify(service, times(1)).fetchPlayliste()
     }
 
     @Test
-    fun emitPlaylistsFromService() = runBlockingTest {
+    fun emitMappedPlaylistsFromService() = runBlockingTest {
         val repository = mockSuccessfulCase()
         assertEquals(playlists,repository.getPlaylists().first().getOrNull())
     }
@@ -35,24 +37,31 @@ private  val exception=RuntimeException("Something Went Wrong!!")
         assertEquals(exception,repository.getPlaylists().first().exceptionOrNull())
 
     }
+    @Test
+    fun delegateBusinessLogicToMapper()= runBlockingTest{
+        val repository=mockSuccessfulCase()
+        repository.getPlaylists().first()
+        verify(mapper, times(1)).invoke(playlistsRaw)
+    }
 
     private suspend fun mockFailureCase(): PlayListRepository {
         whenever(service.fetchPlayliste()).thenReturn(
             flow {
-                emit(Result.failure<List<PlayList>>(exception))
+                emit(Result.failure<List<PlayListRaw>>(exception))
             }
         )
-        val repository = PlayListRepository(service)
+        val repository = PlayListRepository(service,mapper)
         return repository
     }
 
     private suspend fun mockSuccessfulCase(): PlayListRepository {
         whenever(service.fetchPlayliste()).thenReturn(
             flow {
-                emit(Result.success(playlists))
+                emit(Result.success(playlistsRaw))
             }
         )
-        val repository = PlayListRepository(service)
-        return repository
+        whenever(mapper.invoke(playlistsRaw)).thenReturn(playlists)
+        return PlayListRepository(service,mapper)
+
     }
 }
