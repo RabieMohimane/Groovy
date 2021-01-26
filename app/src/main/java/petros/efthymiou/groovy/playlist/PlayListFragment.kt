@@ -9,6 +9,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
+import androidx.navigation.NavDirections
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dagger.hilt.android.AndroidEntryPoint
@@ -34,10 +36,10 @@ class PlayListFragment : Fragment() {
         Log.e("List", "onCreateView")
         viewModel.loader.observe(this as LifecycleOwner) { loading ->
 
-           when(loading){
-               true-> loader.visibility=View.VISIBLE
-               else-> loader.visibility=View.GONE
-           }
+            when (loading) {
+                true -> loader.visibility = View.VISIBLE
+                else -> loader.visibility = View.GONE
+            }
         }
         viewModel.playlists.observe(this as LifecycleOwner) { playlists ->
             Log.e("List", "playlists.observe")
@@ -56,12 +58,18 @@ class PlayListFragment : Fragment() {
         playlists: List<PlayList>
     ) {
         Log.e("List", "setupList")
-        with(view as RecyclerView ) {
+        with(view as RecyclerView) {
             layoutManager = LinearLayoutManager(context)
             adapter =
                 MyPlayListRecyclerViewAdapter(
                     playlists
-                )
+                ) { id ->
+                    val action: NavDirections =
+                        PlayListFragmentDirections.actionPlayListFragmentToPlayListDetailsFragment(
+                            id
+                        )
+                    findNavController().navigate(action)
+                }
         }
     }
 

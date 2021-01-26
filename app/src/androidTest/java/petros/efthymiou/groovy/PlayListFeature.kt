@@ -3,6 +3,8 @@ package petros.efthymiou.groovy
 import android.view.View
 import android.view.ViewGroup
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.IdlingRegistry
+import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.platform.app.InstrumentationRegistry
@@ -22,14 +24,15 @@ import org.junit.runner.RunWith
 
 import org.junit.Assert.*
 import org.junit.Rule
+import petros.efthymiou.groovy.playlist.idelingResource
 
 /**
  * Instrumented test, which will execute on an Android device.
  *
  * See [testing documentation](http://d.android.com/tools/testing).
  */
-@RunWith(AndroidJUnit4::class)
-class PlayListFeature {
+
+class PlayListFeature: BaseUITest() {
     val mActivityRule=ActivityTestRule(MainActivity::class.java)
     @Rule get
     @Test
@@ -38,7 +41,7 @@ class PlayListFeature {
     }
     @Test
     fun displayListOfPlayLists(){
-        Thread.sleep(6000)
+      //  Thread.sleep(6000)
         assertRecyclerViewItemCount(R.id.playlist_list,10)
         onView(allOf(withId(R.id.playlist_name), isDescendantOfA(nthChildOf(withId(R.id.playlist_list),0))))
             .check(matches(withText("Hard Rock Cafe")))
@@ -54,17 +57,18 @@ class PlayListFeature {
     }
     @Test
     fun displaysLoaderWhileFechingThePlaylist(){
+        IdlingRegistry.getInstance().unregister(idelingResource)
         assertDisplayed(R.id.loader)
     }
 
     @Test
     fun hideLoader(){
-        Thread.sleep(6000)
+      //  Thread.sleep(6000)
         assertNotDisplayed(R.id.loader)
     }
     @Test
     fun displayRockImageForRockListsItems(){
-        Thread.sleep(6000)
+      //  Thread.sleep(6000)
         onView(allOf(withId(R.id.image), isDescendantOfA(nthChildOf(withId(R.id.playlist_list),0))))
             .check(matches(withDrawable(R.mipmap.rock)))
             .check(matches(isDisplayed()))
@@ -72,25 +76,15 @@ class PlayListFeature {
             .check(matches(withDrawable(R.mipmap.rock)))
             .check(matches(isDisplayed()))
     }
-
-
-
-    fun nthChildOf(parentMatcher: Matcher<View>, childPosition: Int): Matcher<View> {
-        return object : TypeSafeMatcher<View>() {
-            override fun describeTo(description: Description) {
-                description.appendText("position $childPosition of parent ")
-                parentMatcher.describeTo(description)
-            }
-
-            public override fun matchesSafely(view: View): Boolean {
-                if (view.parent !is ViewGroup) return false
-                val parent = view.parent as ViewGroup
-
-                return (parentMatcher.matches(parent)
-                        && parent.childCount > childPosition
-                        && parent.getChildAt(childPosition) == view)
-            }
-        }
+    @Test
+    fun navigateToDetailsScreen(){
+        onView(allOf(withId(R.id.image), isDescendantOfA(nthChildOf(withId(R.id.playlist_list),0))))
+            .perform(click())
+        assertDisplayed(R.id.playlists_details_root)
     }
+
+
+
+
 
 }

@@ -11,13 +11,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        Log.e("List", "onCreate")
-        if (savedInstanceState == null) {
-            Log.e("list", "savedInstanceState==null")
-            supportFragmentManager.beginTransaction().add(
-                R.id.container,
-                PlayListFragment.newInstance()
-            ).commit()
-        }
+
     }
 }
